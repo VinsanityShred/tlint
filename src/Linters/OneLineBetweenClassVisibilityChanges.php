@@ -30,7 +30,7 @@ class OneLineBetweenClassVisibilityChanges extends BaseLinter
                     ]);
                 }) as $stmt) {
                     if (! is_null($prev)) {
-                        if ($prev->flags !== $stmt->flags && $stmt->getStartLine() - $prev->getEndLine() !== 2) {
+                        if ($prev->flags !== $stmt->flags && $stmt->getStartLine() - $prev->getEndLine() !== 2 + ($stmt->getDocComment() ? $stmt->getLine() - $stmt->getDocComment()->getLine() : 0)) {
                             $notSeparatedByBlankLine[] = $stmt;
                         }
                     }
