@@ -2,6 +2,7 @@
 
 namespace Tighten\Linters;
 
+use PhpParser\Comment;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\UseUse;
 use PhpParser\NodeTraverser;
@@ -82,6 +83,17 @@ class NoUnusedImports extends BaseLinter
                 && $node->returnType instanceof Node\Name
             ) {
                 $used[] = $node->returnType->toString();
+            }
+            
+            if ($node->getDocComment() instanceof Comment) {
+                preg_match_all('/\*\s+@([^\s]+)\s+([^\s]+)(\s\$(.*))?/m', $node->getDocComment(), $params);
+                $params = $params[2];
+                foreach ($params as $param) {
+                    $types = explode('|', $param);
+                    foreach ($types as $type) {
+                        $used[] = trim($type);
+                    }
+                }
             }
 
             return false;
